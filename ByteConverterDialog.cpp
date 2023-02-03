@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QIntValidator>
 #include <QRegularExpressionValidator>
+#include <QLineEdit>
 
 ByteConverterDialog::ByteConverterDialog(){
     // generate the needed layouts
@@ -69,10 +70,31 @@ ByteConverterDialog::ByteConverterDialog(){
     // adding the slot for the quit button to exit the dialog when clicked.
     // accept method simply exit the dialog. rejec method also exits a dialog. this is a convension as each dialog
     // is expected to have OK and Cancel buttons.
-    QObject::connect(quitButton, SIGNAL(clicked()), this, SLOT(accept()))
+    QObject::connect(quitButton, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
 /* always start with the outer layout then goes to inner layers
    by creating, the GUI elements using QObject and allocating them in the heap, Qt takes care of memory releasing if one or more element is
    deleted. the memory it occupies will be released and all its children will be deleted as well.
 */
+
+void ByteConverterDialog::decChanged(const QString & newValue){
+    /**
+     * @brief convertable
+     * params: a reference to a string that is given to input line (QString object)
+     * return: nothing
+     * description: it takes a signal textChanged from edit line and match the content of the other lines with it
+     * so, that the content in all lines are the same number.
+     */
+    bool convertable = false;
+    int num = newValue.toInt(convertable);
+
+    if(convertable){
+        hexEdit->setText(QString::number(num, 16));
+        binEdit->setText(QString::number(num, 2));
+    }
+    else {
+        hexEdit->setText("");
+        binEdit->setText("");
+    }
+}
