@@ -5,10 +5,12 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QIntValidator>
+#include <QRegularExpressionValidator>
 
 ByteConverterDialog::ByteConverterDialog(){
     // generate the needed layouts
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);    // making this dialog as the main layout
     QGridLayout *editLayout = new QGridLayout;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
 
@@ -40,6 +42,34 @@ ByteConverterDialog::ByteConverterDialog(){
     QPushButton *quitButton = new QPushButton(tr("Quit"));
     buttonLayout->addStretch(); // to make the button appear on the right
     buttonLayout->addWidget(quitButton);
+
+    //------------------------------------------------------------ More Improvements ------------------------------------------------
+
+    // making the quit button, the default one means it is pressed by hitting "enter" key.
+    // setting default button only has an effect if the button in a dialog
+    // it doesn't work if this is defined in the main window
+    quitButton->setDefault(true);
+
+    /* validators are derived from the QValidator class. it takes input from the user and decide its validity. */
+    // limit the decimal values from 0 to 255 max.
+    QIntValidator *decValidator = new QIntValidator(0, 255, decEdit);
+    decEdit->setValidator(decValidator);
+
+    // limit the hex to two digits only
+    QRegularExpressionValidator *hexValidator = new QRegularExpressionValidator(QRegularExpression("[0-9A-Fa-f]{1,2}"), hexEdit);
+    hexEdit->setValidator(hexValidator);
+
+    // limit binary to 8 digits
+    QRegularExpressionValidator *binValidator = new QRegularExpressionValidator(QRegularExpression("[01]{1,8}"), binEdit);
+    binEdit->setValidator(binValidator);
+
+    // since, Qwidget is a base class then, we can call the setWindowTitle method.
+    setWindowTitle(tr("Byte Converter"));
+
+    // adding the slot for the quit button to exit the dialog when clicked.
+    // accept method simply exit the dialog. rejec method also exits a dialog. this is a convension as each dialog
+    // is expected to have OK and Cancel buttons.
+    QObject::connect(quitButton, SIGNAL(clicked()), this, SLOT(accept()))
 }
 
 /* always start with the outer layout then goes to inner layers

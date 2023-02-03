@@ -2,7 +2,7 @@
 #define BYTECONVERTERDIALOG_H
 
 #include <QDialog>
-class QLineEdit;
+class QLineEdit;    // forward declaration
 
 class ByteConverterDialog : public QDialog {
     /* that macro should be declared in every derived class of QObject base class as it defines functions for the signal/slot concept
