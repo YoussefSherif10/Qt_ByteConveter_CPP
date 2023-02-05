@@ -10,6 +10,12 @@
 #include <QLineEdit>
 
 ByteConverterDialog::ByteConverterDialog(){
+    /**
+     *  this constructor generates the widgets for the dialog and set up the object hierarchy.
+     *  retsricts the user input to a specific range
+     *  make the signal/slot connections
+     */
+
     // generate the needed layouts
     QVBoxLayout *mainLayout = new QVBoxLayout(this);    // making this dialog as the main layout
     QGridLayout *editLayout = new QGridLayout;
@@ -71,6 +77,11 @@ ByteConverterDialog::ByteConverterDialog(){
     // accept method simply exit the dialog. rejec method also exits a dialog. this is a convension as each dialog
     // is expected to have OK and Cancel buttons.
     QObject::connect(quitButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+    //------------------------------------------------------ connections--------------------------------------------------------
+    connect(decEdit, SIGNAL(textChanged(const QString&)), this, SLOT(decChanged(const QString&)));
+    connect(hexEdit, SIGNAL(textChanged(const QString&)), this, SLOT(hexChanged(const QString&)));
+    connect(binEdit, SIGNAL(textChanged(const QString&)), this, SLOT(binChanged(const QString&)));
 }
 
 /* always start with the outer layout then goes to inner layers
@@ -87,7 +98,7 @@ void ByteConverterDialog::decChanged(const QString & newValue){
      * so, that the content in all lines are the same number.
      */
     bool convertable = false;
-    int num = newValue.toInt(convertable);
+    int num = newValue.toInt(&convertable);
 
     if(convertable){
         hexEdit->setText(QString::number(num, 16));
@@ -95,6 +106,48 @@ void ByteConverterDialog::decChanged(const QString & newValue){
     }
     else {
         hexEdit->setText("");
+        binEdit->setText("");
+    }
+}
+
+void ByteConverterDialog::binChanged(const QString & newValue){
+    /**
+     * @brief convertable
+     * params: a reference to a string that is given to input line (QString object)
+     * return: nothing
+     * description: it takes a signal textChanged from edit line and match the content of the other lines with it
+     * so, that the content in all lines are the same number.
+     */
+    bool convertable = false;
+    int num = newValue.toInt(&convertable);
+
+    if(convertable){
+        decEdit->setText(QString::number(num, 10));
+        hexEdit->setText(QString::number(num, 16));
+    }
+    else {
+        hexEdit->setText("");
+        decEdit->setText("");
+    }
+}
+
+void ByteConverterDialog::hexChanged(const QString & newValue){
+    /**
+     * @brief convertable
+     * params: a reference to a string that is given to input line (QString object)
+     * return: nothing
+     * description: it takes a signal textChanged from edit line and match the content of the other lines with it
+     * so, that the content in all lines are the same number.
+     */
+    bool convertable = false;
+    int num = newValue.toInt(&convertable);
+
+    if(convertable){
+        decEdit->setText(QString::number(num, 10));
+        binEdit->setText(QString::number(num, 2));
+    }
+    else {
+        decEdit->setText("");
         binEdit->setText("");
     }
 }
